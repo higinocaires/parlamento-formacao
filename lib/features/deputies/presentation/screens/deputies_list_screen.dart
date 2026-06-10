@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parlamento_pt/core/theme/theme_mode_provider.dart';
 import 'package:parlamento_pt/features/deputies/data/deputies_repository.dart';
+import 'package:parlamento_pt/features/deputies/presentation/providers/deputies_filter_provider.dart';
 import 'package:parlamento_pt/features/deputies/presentation/providers/deputies_provider.dart';
 import 'package:parlamento_pt/features/deputies/presentation/utils/party_colors.dart';
+import 'package:parlamento_pt/features/deputies/presentation/widgets/deputies_filter_bar.dart';
 import 'package:parlamento_pt/features/deputies/presentation/widgets/deputy_card.dart';
 
 class DeputiesListScreen extends ConsumerWidget {
@@ -60,19 +62,33 @@ class DeputiesListScreen extends ConsumerWidget {
             return const Center(child: Text('Nenhum deputado encontrado'));
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount: deputies.length,
-            itemBuilder: (context, index) {
-              final deputy = deputies[index];
-              return DeputyCard(
-                name: deputy.nomeParlamentar,
-                party: deputy.partidoAtual,
-                partyColor: PartyColors.forParty(deputy.partidoAtual),
-                imageUrl: deputy.photoUrl,
-                onTap: () => context.push('/deputado/${deputy.depCadId}'),
-              );
-            },
+          final filteredDeputies = ref.watch(filteredDeputiesProvider);
+
+          return Column(
+            children: [
+              const DeputiesFilterBar(),
+              Expanded(
+                child: filteredDeputies.isEmpty
+                    ? const Center(child: Text('Nenhum deputado encontrado'))
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        itemCount: filteredDeputies.length,
+                        itemBuilder: (context, index) {
+                          final deputy = filteredDeputies[index];
+                          return DeputyCard(
+                            name: deputy.nomeParlamentar,
+                            party: deputy.partidoAtual,
+                            partyColor: PartyColors.forParty(
+                              deputy.partidoAtual,
+                            ),
+                            imageUrl: deputy.photoUrl,
+                            onTap: () =>
+                                context.push('/deputado/${deputy.depCadId}'),
+                          );
+                        },
+                      ),
+              ),
+            ],
           );
         },
       ),

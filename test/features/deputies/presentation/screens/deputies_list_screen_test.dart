@@ -95,6 +95,66 @@ void main() {
       expect(find.text('Tentar novamente'), findsOneWidget);
     });
 
+    testWidgets('filters deputies by search query', (
+      WidgetTester tester,
+    ) async {
+      final repository = _FakeDeputiesRepository(
+        deputies: const [
+          Deputy(
+            depCadId: 1,
+            nomeParlamentar: 'José Manuel',
+            partidoAtual: 'PS',
+          ),
+          Deputy(
+            depCadId: 2,
+            nomeParlamentar: 'Luís Montenegro',
+            partidoAtual: 'PSD',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        _buildTestApp(
+          repository: repository,
+          child: const DeputiesListScreen(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'jose');
+      await tester.pump();
+
+      expect(find.text('José Manuel'), findsOneWidget);
+      expect(find.text('Luís Montenegro'), findsNothing);
+    });
+
+    testWidgets('shows empty state when filters match nothing', (
+      WidgetTester tester,
+    ) async {
+      final repository = _FakeDeputiesRepository(
+        deputies: const [
+          Deputy(
+            depCadId: 1,
+            nomeParlamentar: 'Luís Montenegro',
+            partidoAtual: 'PSD',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        _buildTestApp(
+          repository: repository,
+          child: const DeputiesListScreen(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'inexistente');
+      await tester.pump();
+
+      expect(find.text('Nenhum deputado encontrado'), findsOneWidget);
+    });
+
     testWidgets('shows empty state when repository returns no deputies', (
       WidgetTester tester,
     ) async {
