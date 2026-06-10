@@ -125,15 +125,17 @@ lib/
 - **Task 1.1** — Feature First folder structure under `lib/`
 - **Task 1.2** — `PartyBadge` atom widget with tests and examples
 - **Task 1.3** — `DeputyCard` molecule widget with tests and integrated ListView
+- **Task 1.4** — Deputies list scrolling smoothly with mock data file (`mock_deputies.dart`)
+- **Task 1.5** — Bootstrap-only `lib/main.dart`; `MaterialApp` setup in `lib/core/app.dart`
 - Dependencies: `flutter_riverpod`, `http`, `go_router`
-- Minimal bootstrap in `lib/main.dart` (`ProviderScope` + `MaterialApp`)
-- Placeholder `DeputiesListScreen` wired as home screen
+- `DeputiesListScreen` wired as home screen via `App`
 - Widget smoke test (`test/widget_test.dart`)
+- **Task 2.1** — App-wide Light and Dark themes (`app_theme.dart`) with Parliament-inspired palette
 
 ### Not started yet
 
+- Light / dark theme toggle (Riverpod state)
 - Deputies list content (API data) and detail screen
-- Light / dark themes
 - `go_router` navigation setup
 - Parlamento.pt API integration
 - Riverpod providers (cache + search)
@@ -144,20 +146,24 @@ lib/
 
 ```
 lib/
-  main.dart                              # Bootstrap (ProviderScope + MaterialApp)
+  main.dart                              # Bootstrap only (ProviderScope + App)
   core/
+    app.dart                             # MaterialApp setup
     theme/
     router/
     constants/
   features/
     deputies/
       data/
+        mock_deputies.dart
       domain/
       presentation/
         providers/
         screens/
-          deputies_list_screen.dart      # Placeholder home screen
+          deputies_list_screen.dart
         widgets/
+          party_badge.dart
+          deputy_card.dart
 ```
 
 Base dependencies installed. `http` and `go_router` are not wired in code yet.
