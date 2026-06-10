@@ -16,16 +16,14 @@ class DeputiesListScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Deputados'),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 48),
-            child: Switch(
-              value: isDark,
-              onChanged: (value) {
-                ref.read(themeModeProvider.notifier).state =
-                    value ? ThemeMode.dark : ThemeMode.light;
-              },
-            ),
+          Switch(
+            value: isDark,
+            onChanged: (value) {
+              ref.read(themeModeProvider.notifier).state =
+                  value ? ThemeMode.dark : ThemeMode.light;
+            },
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: ListView.builder(
