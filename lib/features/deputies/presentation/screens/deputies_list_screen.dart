@@ -1,14 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parlamento_pt/core/theme/theme_mode_provider.dart';
-import 'package:parlamento_pt/features/deputies/data/mock_deputies.dart';
+import 'package:parlamento_pt/features/deputies/data/deputies_repository.dart';
+import 'package:parlamento_pt/features/deputies/domain/deputy.dart';
+import 'package:parlamento_pt/features/deputies/presentation/utils/party_colors.dart';
 import 'package:parlamento_pt/features/deputies/presentation/widgets/deputy_card.dart';
 
-class DeputiesListScreen extends ConsumerWidget {
-  const DeputiesListScreen({super.key});
+class DeputiesListScreen extends ConsumerStatefulWidget {
+  const DeputiesListScreen({super.key, this.repository});
+
+  /// Optional override for tests. Defaults to [DeputiesRepository].
+  final DeputiesRepository? repository;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DeputiesListScreen> createState() => _DeputiesListScreenState();
+}
+
+class _DeputiesListScreenState extends ConsumerState<DeputiesListScreen> {
+  late Future<List<Deputy>> _deputiesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDeputies();
+  }
+
+  void _loadDeputies() {
+    final repository = widget.repository ?? DeputiesRepository();
+    setState(() {
+      _deputiesFuture = repository.fetchAllDeputies();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.watch(themeModeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -26,22 +51,62 @@ class DeputiesListScreen extends ConsumerWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: mockDeputies.length,
-        itemBuilder: (context, index) {
-          final deputy = mockDeputies[index];
-          return DeputyCard(
-            name: deputy.name,
-            party: deputy.party,
-            partyColor: deputy.partyColor,
-            imageUrl: deputy.imageUrl,
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Selecionou ${deputy.name}'),
-                  duration: const Duration(seconds: 1),
+      body: FutureBuilder<List<Deputy>>(
+        future: _deputiesFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            final message = snapshot.error is DeputiesRepositoryException
+                ? (snapshot.error! as DeputiesRepositoryException).message
+                : 'Ocorreu um erro ao carregar os deputados.';
+
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      message,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    FilledButton(
+                      onPressed: _loadDeputies,
+                      child: const Text('Tentar novamente'),
+                    ),
+                  ],
                 ),
+              ),
+            );
+          }
+
+          final deputies = snapshot.data ?? [];
+          if (deputies.isEmpty) {
+            return const Center(child: Text('Nenhum deputado encontrado'));
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: deputies.length,
+            itemBuilder: (context, index) {
+              final deputy = deputies[index];
+              return DeputyCard(
+                name: deputy.nomeParlamentar,
+                party: deputy.partidoAtual,
+                partyColor: PartyColors.forParty(deputy.partidoAtual),
+                imageUrl: deputy.photoUrl,
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Selecionou ${deputy.nomeParlamentar}'),
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                },
               );
             },
           );

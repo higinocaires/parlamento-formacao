@@ -47,7 +47,9 @@ class DeputyCard extends StatelessWidget {
               // Profile Photo / Placeholder
               CircleAvatar(
                 radius: 28,
-                backgroundColor: theme.colorScheme.primaryContainer,
+                backgroundColor: partyColor != null
+                    ? partyColor!.withValues(alpha: 0.2)
+                    : theme.colorScheme.primaryContainer,
                 backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
                     ? NetworkImage(imageUrl!)
                     : null,
@@ -55,7 +57,7 @@ class DeputyCard extends StatelessWidget {
                     ? Text(
                         _getInitials(name),
                         style: TextStyle(
-                          color: theme.colorScheme.onPrimaryContainer,
+                          color: partyColor ?? theme.colorScheme.onPrimaryContainer,
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),

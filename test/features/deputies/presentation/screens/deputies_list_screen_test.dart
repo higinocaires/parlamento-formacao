@@ -1,32 +1,114 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:parlamento_pt/core/app.dart';
-import 'package:parlamento_pt/features/deputies/data/mock_deputies.dart';
+import 'package:parlamento_pt/features/deputies/data/deputies_repository.dart';
+import 'package:parlamento_pt/features/deputies/domain/deputy.dart';
 import 'package:parlamento_pt/features/deputies/presentation/screens/deputies_list_screen.dart';
 import 'package:parlamento_pt/features/deputies/presentation/widgets/deputy_card.dart';
 
 void main() {
   group('DeputiesListScreen Widget Tests', () {
-    testWidgets('renders list of deputies from mock data', (
+    testWidgets('shows loading indicator while fetching deputies', (
       WidgetTester tester,
     ) async {
+      final completer = Completer<List<Deputy>>();
+      addTearDown(() {
+        if (!completer.isCompleted) {
+          completer.complete(const []);
+        }
+      });
+      final repository = _FakeDeputiesRepository(completer: completer);
+
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(home: DeputiesListScreen()),
+        ProviderScope(
+          child: MaterialApp(
+            home: DeputiesListScreen(repository: repository),
+          ),
         ),
       );
+      await tester.pump();
 
-      // Verify page title
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.text('Deputados'), findsOneWidget);
+    });
 
-      // Verify that DeputyCards are rendered.
-      expect(find.byType(DeputyCard), findsAtLeastNWidgets(1));
+    testWidgets('renders list of deputies from repository', (
+      WidgetTester tester,
+    ) async {
+      final repository = _FakeDeputiesRepository(
+        deputies: const [
+          Deputy(
+            depCadId: 1,
+            nomeParlamentar: 'Luís Montenegro',
+            partidoAtual: 'PSD',
+          ),
+          Deputy(
+            depCadId: 2,
+            nomeParlamentar: 'Pedro Nuno Santos',
+            partidoAtual: 'PS',
+          ),
+          Deputy(
+            depCadId: 3,
+            nomeParlamentar: 'André Ventura',
+            partidoAtual: 'CH',
+          ),
+        ],
+      );
 
-      // Verify that some of the mock names are visible
-      expect(find.text(mockDeputies[0].name), findsOneWidget);
-      expect(find.text(mockDeputies[1].name), findsOneWidget);
-      expect(find.text(mockDeputies[2].name), findsOneWidget);
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: DeputiesListScreen(repository: repository),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Deputados'), findsOneWidget);
+      expect(find.byType(DeputyCard), findsNWidgets(3));
+      expect(find.text('Luís Montenegro'), findsOneWidget);
+      expect(find.text('Pedro Nuno Santos'), findsOneWidget);
+      expect(find.text('André Ventura'), findsOneWidget);
+    });
+
+    testWidgets('shows error state with retry button', (
+      WidgetTester tester,
+    ) async {
+      final repository = _FakeDeputiesRepository(
+        error: DeputiesRepositoryException('Falha de rede'),
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: DeputiesListScreen(repository: repository),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Falha de rede'), findsOneWidget);
+      expect(find.text('Tentar novamente'), findsOneWidget);
+    });
+
+    testWidgets('shows empty state when repository returns no deputies', (
+      WidgetTester tester,
+    ) async {
+      final repository = _FakeDeputiesRepository();
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: DeputiesListScreen(repository: repository),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Nenhum deputado encontrado'), findsOneWidget);
     });
 
     testWidgets('toggles theme mode with switch', (WidgetTester tester) async {
@@ -54,19 +136,53 @@ void main() {
     testWidgets('shows SnackBar when deputy card is tapped', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(home: DeputiesListScreen()),
-        ),
+      const deputyName = 'Luís Montenegro';
+      final repository = _FakeDeputiesRepository(
+        deputies: const [
+          Deputy(
+            depCadId: 1,
+            nomeParlamentar: deputyName,
+            partidoAtual: 'PSD',
+          ),
+        ],
       );
 
-      // Tap on the first deputy
-      final firstDeputyName = mockDeputies[0].name;
-      await tester.tap(find.text(firstDeputyName));
-      await tester.pump(); // Start SnackBar animation
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: DeputiesListScreen(repository: repository),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-      // Verify that SnackBar is shown with the expected text
-      expect(find.text('Selecionou $firstDeputyName'), findsOneWidget);
+      await tester.tap(find.text(deputyName));
+      await tester.pump();
+
+      expect(find.text('Selecionou $deputyName'), findsOneWidget);
     });
   });
+}
+
+class _FakeDeputiesRepository extends DeputiesRepository {
+  _FakeDeputiesRepository({
+    this.deputies = const [],
+    this.completer,
+    this.error,
+  });
+
+  final List<Deputy> deputies;
+  final Completer<List<Deputy>>? completer;
+  final Object? error;
+
+  @override
+  Future<List<Deputy>> fetchAllDeputies() {
+    if (completer != null) {
+      return completer!.future;
+    }
+    if (error != null) {
+      return Future<List<Deputy>>.error(error!);
+    }
+    return Future<List<Deputy>>.value(deputies);
+  }
 }
