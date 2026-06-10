@@ -10,7 +10,7 @@ GoRouter createAppRouter({DeputiesRepository? repository}) {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => DeputiesListScreen(repository: repository),
+        builder: (context, state) => const DeputiesListScreen(),
       ),
       GoRoute(
         path: '/deputado/:depCadId',

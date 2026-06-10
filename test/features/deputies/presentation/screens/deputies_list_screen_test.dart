@@ -8,6 +8,7 @@ import 'package:parlamento_pt/core/router/app_router.dart';
 import 'package:parlamento_pt/features/deputies/data/deputies_repository.dart';
 import 'package:parlamento_pt/features/deputies/domain/deputy.dart';
 import 'package:parlamento_pt/features/deputies/domain/iniciativa.dart';
+import 'package:parlamento_pt/features/deputies/presentation/providers/deputies_provider.dart';
 import 'package:parlamento_pt/features/deputies/presentation/screens/deputies_list_screen.dart';
 import 'package:parlamento_pt/features/deputies/presentation/screens/deputy_detail_screen.dart';
 import 'package:parlamento_pt/features/deputies/presentation/widgets/deputy_card.dart';
@@ -26,10 +27,9 @@ void main() {
       final repository = _FakeDeputiesRepository(completer: completer);
 
       await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            home: DeputiesListScreen(repository: repository),
-          ),
+        _buildTestApp(
+          repository: repository,
+          child: const DeputiesListScreen(),
         ),
       );
       await tester.pump();
@@ -62,10 +62,9 @@ void main() {
       );
 
       await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            home: DeputiesListScreen(repository: repository),
-          ),
+        _buildTestApp(
+          repository: repository,
+          child: const DeputiesListScreen(),
         ),
       );
       await tester.pumpAndSettle();
@@ -85,10 +84,9 @@ void main() {
       );
 
       await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            home: DeputiesListScreen(repository: repository),
-          ),
+        _buildTestApp(
+          repository: repository,
+          child: const DeputiesListScreen(),
         ),
       );
       await tester.pumpAndSettle();
@@ -103,10 +101,9 @@ void main() {
       final repository = _FakeDeputiesRepository();
 
       await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            home: DeputiesListScreen(repository: repository),
-          ),
+        _buildTestApp(
+          repository: repository,
+          child: const DeputiesListScreen(),
         ),
       );
       await tester.pumpAndSettle();
@@ -139,6 +136,9 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
+          overrides: [
+            deputiesRepositoryProvider.overrideWithValue(repository),
+          ],
           child: MaterialApp.router(
             routerConfig: createAppRouter(repository: repository),
           ),
@@ -153,6 +153,46 @@ void main() {
       expect(find.text('Iniciativas'), findsOneWidget);
       expect(find.text('Iniciativa de teste'), findsOneWidget);
       expect(find.text('Círculo: Braga'), findsOneWidget);
+    });
+
+    testWidgets('does not refetch deputies when returning from detail', (
+      WidgetTester tester,
+    ) async {
+      var fetchCount = 0;
+      const deputy = Deputy(
+        depCadId: 42,
+        nomeParlamentar: 'Luís Montenegro',
+        partidoAtual: 'PSD',
+      );
+
+      final repository = _FakeDeputiesRepository(
+        deputies: const [deputy],
+        deputyDetail: deputy,
+        onFetchAll: () => fetchCount++,
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            deputiesRepositoryProvider.overrideWithValue(repository),
+          ],
+          child: MaterialApp.router(
+            routerConfig: createAppRouter(repository: repository),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(fetchCount, 1);
+
+      await tester.tap(find.text('Luís Montenegro'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+
+      expect(fetchCount, 1);
+      expect(find.text('Luís Montenegro'), findsOneWidget);
     });
 
     testWidgets('toggles theme mode with switch', (WidgetTester tester) async {
@@ -179,6 +219,18 @@ void main() {
   });
 }
 
+Widget _buildTestApp({
+  required DeputiesRepository repository,
+  required Widget child,
+}) {
+  return ProviderScope(
+    overrides: [
+      deputiesRepositoryProvider.overrideWithValue(repository),
+    ],
+    child: MaterialApp(home: child),
+  );
+}
+
 class _FakeDeputiesRepository extends DeputiesRepository {
   _FakeDeputiesRepository({
     this.deputies = const [],
@@ -186,6 +238,7 @@ class _FakeDeputiesRepository extends DeputiesRepository {
     this.iniciativas = const [],
     this.completer,
     this.error,
+    this.onFetchAll,
   });
 
   final List<Deputy> deputies;
@@ -193,9 +246,11 @@ class _FakeDeputiesRepository extends DeputiesRepository {
   final List<Iniciativa> iniciativas;
   final Completer<List<Deputy>>? completer;
   final Object? error;
+  final void Function()? onFetchAll;
 
   @override
   Future<List<Deputy>> fetchAllDeputies() {
+    onFetchAll?.call();
     if (completer != null) {
       return completer!.future;
     }
