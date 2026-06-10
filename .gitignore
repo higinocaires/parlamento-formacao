@@ -107,6 +107,12 @@ unlinked_spec.ds
 # Coverage
 coverage/
 
+# Firebase
+.firebase/
+functions/node_modules/
+firebase-debug.log
+firebase-debug.*.log
+
 # Symbols
 app.*.symbols
 

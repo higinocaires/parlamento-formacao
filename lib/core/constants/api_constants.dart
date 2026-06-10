@@ -1,5 +1,11 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 /// Constants and URL helpers for the
 /// [votoaberto API](https://api.votoaberto.org/api/v1).
+///
+/// On Web, requests go through the Firebase Hosting rewrite (`/api/v1` →
+/// Cloud Function proxy) to avoid browser CORS blocks. Native platforms call
+/// the upstream API directly.
 ///
 /// Relevant JSON field names on deputy list/detail responses:
 /// - [fieldNomeParlamentar] — display name
@@ -8,7 +14,13 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl = 'https://api.votoaberto.org/api/v1';
+  static const String upstreamBaseUrl = 'https://api.votoaberto.org/api/v1';
+
+  /// Same-origin proxy path when deployed to Firebase Hosting (Web only).
+  static const String webProxyBaseUrl = '/api/v1';
+
+  static String get baseUrl =>
+      kIsWeb ? webProxyBaseUrl : upstreamBaseUrl;
 
   static const String legislatura = 'L17';
   static const String situacao = 'Efetivo';

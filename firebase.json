@@ -1,0 +1,55 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "parlamento-formacao",
+          "appId": "1:217163545671:android:b9fc8445aaa3c7b9498562",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "parlamento-formacao",
+          "configurations": {
+            "android": "1:217163545671:android:b9fc8445aaa3c7b9498562",
+            "ios": "1:217163545671:ios:69c90fc3920fd015498562",
+            "web": "1:217163545671:web:7746983dfe180756498562",
+            "windows": "1:217163545671:web:5a93672017d2f507498562"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ],
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/**",
+        "function": "votoabertoProxy"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

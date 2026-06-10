@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "217163545671",
+    "project_id": "parlamento-formacao",
+    "storage_bucket": "parlamento-formacao.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:217163545671:android:b9fc8445aaa3c7b9498562",
+        "android_client_info": {
+          "package_name": "pt.parlamento.parlamento_pt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkwapqnpr_1Xu8VOXgvUPP1YNosCkwBoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
