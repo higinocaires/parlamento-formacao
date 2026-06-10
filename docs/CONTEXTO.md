@@ -131,10 +131,10 @@ lib/
 - `DeputiesListScreen` wired as home screen via `App`
 - Widget smoke test (`test/widget_test.dart`)
 - **Task 2.1** — App-wide Light and Dark themes (`app_theme.dart`) with Parliament-inspired palette
+- **Task 2.2** — Theme mode toggle via Riverpod (`theme_mode_provider.dart`); AppBar `Switch` in `DeputiesListScreen` (light ↔ dark, in-memory only)
 
 ### Not started yet
 
-- Light / dark theme toggle (Riverpod state)
 - Deputies list content (API data) and detail screen
 - `go_router` navigation setup
 - Parlamento.pt API integration
@@ -150,6 +150,8 @@ lib/
   core/
     app.dart                             # MaterialApp setup
     theme/
+      app_theme.dart
+      theme_mode_provider.dart
     router/
     constants/
   features/
