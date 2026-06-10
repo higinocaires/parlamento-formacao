@@ -1,0 +1,45 @@
+﻿=== git status ===
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .gitignore
+	modified:   android/app/build.gradle.kts
+	modified:   android/settings.gradle.kts
+	modified:   lib/core/constants/api_constants.dart
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.firebase/
+	.firebaserc
+	android/app/google-services.json
+	firebase.json
+	functions/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+=== git diff --stat ===
+git : warning: in the working copy of 'android/app/build.gradle.kts', LF will be replaced by CRLF the next time Git 
+touches it
+At line:1 char:136
++ ... Out-String), '=== git diff --stat ===', (git diff --stat 2>&1 | Out-S ...
++                                              ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+warning: in the working copy of 'android/settings.gradle.kts', LF will be replaced by CRLF the next time Git touches it
+ .gitignore                            |  5 +++++
+ android/app/build.gradle.kts          |  3 +++
+ android/settings.gradle.kts           |  3 +++
+ lib/core/constants/api_constants.dart | 14 +++++++++++++-
+ 4 files changed, 24 insertions(+), 1 deletion(-)
+
+=== git log -5 --oneline ===
+3a3c421 updated context task 4.3
+58a9178 feat: add search and party filter for deputies list
+2b983fd feat: add deputies Riverpod provider with in-memory cache
+6c9e07c refactor: improve deputy detail layout and iniciativa cards
+16c1be0 feat: add party colors for parliamentary groups
+

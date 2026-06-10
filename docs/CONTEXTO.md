@@ -136,6 +136,8 @@ lib/
 - **Task 3.5** — `DeputyDetailScreen`, `go_router` navigation, iniciativas list
 - **Task 4.2** — `deputiesProvider` Riverpod cache (in-memory, no refetch on back)
 - **Task 4.3** — Ephemeral search + party filter (`deputies_filter_provider.dart`, `DeputiesFilterBar`)
+- **Module 5** — Firebase Hosting deploy (project `parlamento-formacao`, `build/web`)
+- **Web CORS proxy** — Cloud Function `votoabertoProxy` (`functions/index.js`); Hosting rewrite `/api/**` → proxy; Web uses `ApiConstants.webProxyBaseUrl` (`/api/v1`), native uses upstream URL directly
 - Dependencies: `flutter_riverpod`, `http`, `go_router`, `diacritic`
 - `PartyColors` utility for party badge colours
 - Widget smoke test (`test/widget_test.dart`) + domain/repository/provider tests
@@ -143,7 +145,6 @@ lib/
 ### Not started yet
 
 - Iniciativas pagination UI (first 50 only for now)
-- Firebase Hosting deploy
 - Extended test coverage (Nice — ≥20% coverage planned for after the app is functional)
 
 ### Current codebase
@@ -184,6 +185,13 @@ lib/
           deputy_card.dart
           deputies_filter_bar.dart
           iniciativa_card.dart
+  firebase_options.dart                  # Firebase config (FlutterFire)
+firebase.json                            # Hosting + Functions config
+.firebaserc                              # Project: parlamento-formacao
+functions/
+  index.js                               # votoabertoProxy (CORS proxy for Web)
 ```
 
-API: [votoaberto](https://api.votoaberto.org/api/v1). Android `INTERNET` permission configured.
+API: [votoaberto](https://api.votoaberto.org/api/v1). Web calls `/api/v1` via Hosting proxy; Android/iOS/Windows call upstream directly. Android `INTERNET` permission configured.
+
+Deploy Web: `flutter build web` then `firebase deploy --only hosting,functions`
