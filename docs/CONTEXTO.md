@@ -123,22 +123,26 @@ lib/
 - Platforms enabled: web, android, ios, windows
 - Project documentation: `docs/CONTEXTO.md`, `README.md`
 - **Task 1.1** — Feature First folder structure under `lib/`
-- **Task 1.2** — `PartyBadge` atom widget with tests and examples
+- **Task 1.2** — `PartyBadge` atom widget with tests
 - **Task 1.3** — `DeputyCard` molecule widget with tests and integrated ListView
-- **Task 1.4** — Deputies list scrolling smoothly with mock data file (`mock_deputies.dart`)
+- **Task 1.4** — Deputies list scrolling with mock data (`mock_deputies.dart`)
 - **Task 1.5** — Bootstrap-only `lib/main.dart`; `MaterialApp` setup in `lib/core/app.dart`
-- Dependencies: `flutter_riverpod`, `http`, `go_router`
-- `DeputiesListScreen` wired as home screen via `App`
-- Widget smoke test (`test/widget_test.dart`)
 - **Task 2.1** — App-wide Light and Dark themes (`app_theme.dart`) with Parliament-inspired palette
-- **Task 2.2** — Theme mode toggle via Riverpod (`theme_mode_provider.dart`); AppBar `Switch` in `DeputiesListScreen` (light ↔ dark, in-memory only)
+- **Task 2.2** — Theme mode toggle via Riverpod (`theme_mode_provider.dart`); AppBar `Switch` (light ↔ dark, in-memory only)
+- **Task 3.1** — votoaberto API constants (`api_constants.dart`)
+- **Task 3.2** — `Deputy` domain model + `DeputiesPage` JSON parsing
+- **Task 3.3** — `DeputiesRepository` with paginated HTTP fetch
+- **Task 3.4** — Deputies list loaded from votoaberto API (replaces mock in UI)
+- **Task 3.5** — `DeputyDetailScreen`, `go_router` navigation, iniciativas list
+- **Task 4.2** — `deputiesProvider` Riverpod cache (in-memory, no refetch on back)
+- **Task 4.3** — Ephemeral search + party filter (`deputies_filter_provider.dart`, `DeputiesFilterBar`)
+- Dependencies: `flutter_riverpod`, `http`, `go_router`, `diacritic`
+- `PartyColors` utility for party badge colours
+- Widget smoke test (`test/widget_test.dart`) + domain/repository/provider tests
 
 ### Not started yet
 
-- Deputies list content (API data) and detail screen
-- `go_router` navigation setup
-- Parlamento.pt API integration
-- Riverpod providers (cache + search)
+- Iniciativas pagination UI (first 50 only for now)
 - Firebase Hosting deploy
 - Extended test coverage (Nice — ≥20% coverage planned for after the app is functional)
 
@@ -148,24 +152,38 @@ lib/
 lib/
   main.dart                              # Bootstrap only (ProviderScope + App)
   core/
-    app.dart                             # MaterialApp setup
+    app.dart                             # MaterialApp.router
     theme/
       app_theme.dart
       theme_mode_provider.dart
     router/
+      app_router.dart                    # / and /deputado/:depCadId
     constants/
+      api_constants.dart
   features/
     deputies/
       data/
-        mock_deputies.dart
+        deputies_repository.dart
+        mock_deputies.dart               # kept for reference/tests
       domain/
+        deputy.dart
+        deputies_page.dart
+        iniciativa.dart
+        iniciativas_page.dart
       presentation/
         providers/
+          deputies_provider.dart
+          deputies_filter_provider.dart
         screens/
           deputies_list_screen.dart
+          deputy_detail_screen.dart
+        utils/
+          party_colors.dart
         widgets/
           party_badge.dart
           deputy_card.dart
+          deputies_filter_bar.dart
+          iniciativa_card.dart
 ```
 
-Base dependencies installed. `http` and `go_router` are not wired in code yet.
+API: [votoaberto](https://api.votoaberto.org/api/v1). Android `INTERNET` permission configured.
