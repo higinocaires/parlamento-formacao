@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "parlamento_pt (Chrome)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "chrome"
+        },
+        {
+            "name": "parlamento_pt (Edge)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "edge"
+        }
+    ]
+}

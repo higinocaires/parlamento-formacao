@@ -123,6 +123,8 @@ lib/
 - Platforms enabled: web, android, ios, windows
 - Project documentation: `docs/CONTEXTO.md`, `README.md`
 - **Task 1.1** — Feature First folder structure under `lib/`
+- **Task 1.2** — `PartyBadge` atom widget with tests and examples
+- **Task 1.3** — `DeputyCard` molecule widget with tests and integrated ListView
 - Dependencies: `flutter_riverpod`, `http`, `go_router`
 - Minimal bootstrap in `lib/main.dart` (`ProviderScope` + `MaterialApp`)
 - Placeholder `DeputiesListScreen` wired as home screen
@@ -130,7 +132,6 @@ lib/
 
 ### Not started yet
 
-- Custom widgets (`PartyBadge`, `DeputyCard`)
 - Deputies list content (API data) and detail screen
 - Light / dark themes
 - `go_router` navigation setup
