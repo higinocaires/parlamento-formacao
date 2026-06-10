@@ -121,26 +121,42 @@ lib/
 - Git repository connected to GitHub
 - Flutter project scaffold (`flutter create`)
 - Platforms enabled: web, android, ios, windows
-- Default counter app in `lib/main.dart` (not yet replaced)
 - Project documentation: `docs/CONTEXTO.md`, `README.md`
+- **Task 1.1** — Feature First folder structure under `lib/`
+- Dependencies: `flutter_riverpod`, `http`, `go_router`
+- Minimal bootstrap in `lib/main.dart` (`ProviderScope` + `MaterialApp`)
+- Placeholder `DeputiesListScreen` wired as home screen
+- Widget smoke test (`test/widget_test.dart`)
 
 ### Not started yet
 
-- Feature First folder structure under `lib/`
-- Dependencies: `flutter_riverpod`, `http`, `go_router`
 - Custom widgets (`PartyBadge`, `DeputyCard`)
-- Deputies list and detail screens
+- Deputies list content (API data) and detail screen
 - Light / dark themes
+- `go_router` navigation setup
 - Parlamento.pt API integration
 - Riverpod providers (cache + search)
 - Firebase Hosting deploy
-- Tests (Nice — planned for after the app is functional)
+- Extended test coverage (Nice — ≥20% coverage planned for after the app is functional)
 
 ### Current codebase
 
 ```
 lib/
-  main.dart          # Default Flutter counter template
+  main.dart                              # Bootstrap (ProviderScope + MaterialApp)
+  core/
+    theme/
+    router/
+    constants/
+  features/
+    deputies/
+      data/
+      domain/
+      presentation/
+        providers/
+        screens/
+          deputies_list_screen.dart      # Placeholder home screen
+        widgets/
 ```
 
-No feature folders, no custom dependencies beyond `cupertino_icons`.
+Base dependencies installed. `http` and `go_router` are not wired in code yet.
