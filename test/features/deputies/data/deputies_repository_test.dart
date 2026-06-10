@@ -120,23 +120,8 @@ void main() {
     });
 
     test('fetchIniciativas parses first page', () async {
-      final page = {
-        'data': [
-          {
-            'ini_id': '356662',
-            'ini_nr': '900',
-            'legislatura': 'L17',
-            'ini_tipo': 'R',
-            'ini_desc_tipo': 'Projeto de Resolução',
-            'ini_titulo': 'Primeira iniciativa',
-            'autor_gp': null,
-          },
-        ],
-        'pagination': {'limit': 50, 'offset': 0, 'total': 1},
-      };
-
       final client = MockClient(
-        (_) async => http.Response(jsonEncode(page), 200),
+        (_) async => http.Response(jsonEncode(_iniciativasPageJson()), 200),
       );
 
       final repository = DeputiesRepository(client: client);
@@ -144,6 +129,32 @@ void main() {
 
       expect(iniciativas, hasLength(1));
       expect(iniciativas.first.titulo, 'Primeira iniciativa');
+    });
+
+    test('fetchIniciativasPage requests offset in URL', () async {
+      Uri? requestedUri;
+      final client = MockClient((request) async {
+        requestedUri = request.url;
+        return http.Response(
+          jsonEncode(
+            _iniciativasPageJson(
+              offset: 50,
+              titulo: 'Quinquagésima primeira iniciativa',
+            ),
+          ),
+          200,
+        );
+      });
+
+      final repository = DeputiesRepository(client: client);
+      final page = await repository.fetchIniciativasPage(7489, offset: 50);
+
+      expect(requestedUri, isNotNull);
+      expect(requestedUri!.queryParameters['offset'], '50');
+      expect(requestedUri!.queryParameters['limit'], '${ApiConstants.pageSize}');
+      expect(page.offset, 50);
+      expect(page.total, 75);
+      expect(page.iniciativas.first.titulo, 'Quinquagésima primeira iniciativa');
     });
 
     test('fetchAllDeputies throws on invalid JSON', () async {
@@ -184,5 +195,26 @@ Map<String, dynamic> _emptyPage() {
   return {
     'data': <dynamic>[],
     'pagination': {'limit': 50, 'offset': 0, 'total': 0},
+  };
+}
+
+Map<String, dynamic> _iniciativasPageJson({
+  int offset = 0,
+  String titulo = 'Primeira iniciativa',
+  int total = 75,
+}) {
+  return {
+    'data': [
+      {
+        'ini_id': '356662',
+        'ini_nr': '900',
+        'legislatura': 'L17',
+        'ini_tipo': 'R',
+        'ini_desc_tipo': 'Projeto de Resolução',
+        'ini_titulo': titulo,
+        'autor_gp': null,
+      },
+    ],
+    'pagination': {'limit': 50, 'offset': offset, 'total': total},
   };
 }

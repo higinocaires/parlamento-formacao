@@ -52,11 +52,25 @@ class DeputiesRepository {
     return Deputy.fromJson(json);
   }
 
+  /// Fetches one page of iniciativas for a deputy.
+  Future<IniciativasPage> fetchIniciativasPage(
+    int depCadId, {
+    int offset = 0,
+    int? limit,
+  }) async {
+    final url = ApiConstants.deputyIniciativasUrl(
+      depCadId,
+      offset: offset,
+      limit: limit ?? ApiConstants.pageSize,
+    );
+    final json = await _getJson(url, 'iniciativas');
+    return IniciativasPage.fromJson(json);
+  }
+
   /// Fetches the first page of iniciativas for a deputy.
   Future<List<Iniciativa>> fetchIniciativas(int depCadId) async {
-    final url = ApiConstants.deputyIniciativasUrl(depCadId);
-    final json = await _getJson(url, 'iniciativas');
-    return IniciativasPage.fromJson(json).iniciativas;
+    final page = await fetchIniciativasPage(depCadId);
+    return page.iniciativas;
   }
 
   Future<DeputiesPage> _fetchDeputiesPage(int offset) async {

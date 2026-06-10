@@ -140,12 +140,13 @@ lib/
 - **Web CORS proxy** — Cloud Function `votoabertoProxy` (`functions/index.js`); Hosting rewrite `/api/**` → proxy; Web uses `ApiConstants.webProxyBaseUrl` (`/api/v1`), native uses upstream URL directly
 - Dependencies: `flutter_riverpod`, `http`, `go_router`, `diacritic`
 - `PartyColors` utility for party badge colours
-- Widget smoke test (`test/widget_test.dart`) + domain/repository/provider tests
+- **Tests (Module 2 Nice)** — 38 tests passing; `lib/` line coverage **93.77%** (376/401 lines, measured with `flutter test --coverage`; course target ≥20%)
+
+- **Iniciativas pagination** — `fetchIniciativasPage` in repository; detail screen loads 50 at a time with **Carregar mais** button
 
 ### Not started yet
 
-- Iniciativas pagination UI (first 50 only for now)
-- Extended test coverage (Nice — ≥20% coverage planned for after the app is functional)
+- Cucumber / Maestro (Module 2 Nice)
 
 ### Current codebase
 

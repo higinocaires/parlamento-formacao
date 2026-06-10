@@ -20,49 +20,90 @@ class DeputyDetailScreen extends StatefulWidget {
   State<DeputyDetailScreen> createState() => _DeputyDetailScreenState();
 }
 
-class _DeputyDetailData {
-  const _DeputyDetailData({
-    required this.deputy,
-    required this.iniciativas,
-  });
-
-  final Deputy deputy;
-  final List<Iniciativa> iniciativas;
-}
-
 class _DeputyDetailScreenState extends State<DeputyDetailScreen> {
-  late Future<_DeputyDetailData> _detailFuture;
+  late Future<Deputy> _deputyFuture;
+  final List<Iniciativa> _iniciativas = [];
+  int _iniciativasTotal = 0;
+  bool _loadingIniciativas = true;
+  bool _loadingMoreIniciativas = false;
+  String? _iniciativasError;
+
+  DeputiesRepository get _repository =>
+      widget.repository ?? DeputiesRepository();
 
   @override
   void initState() {
     super.initState();
-    _loadDetail();
+    _loadDeputy();
+    _loadIniciativas(fromStart: true);
   }
 
-  void _loadDetail() {
-    final repository = widget.repository ?? DeputiesRepository();
+  void _loadDeputy() {
     setState(() {
-      _detailFuture = _fetchDetail(repository);
+      _deputyFuture = _repository.fetchDeputy(widget.depCadId);
     });
   }
 
-  Future<_DeputyDetailData> _fetchDetail(DeputiesRepository repository) async {
-    final results = await Future.wait([
-      repository.fetchDeputy(widget.depCadId),
-      repository.fetchIniciativas(widget.depCadId),
-    ]);
-    return _DeputyDetailData(
-      deputy: results[0] as Deputy,
-      iniciativas: results[1] as List<Iniciativa>,
-    );
+  Future<void> _loadIniciativas({required bool fromStart}) async {
+    if (fromStart) {
+      setState(() {
+        _loadingIniciativas = true;
+        _iniciativasError = null;
+        _iniciativas.clear();
+        _iniciativasTotal = 0;
+      });
+    } else {
+      if (_loadingMoreIniciativas ||
+          _iniciativas.length >= _iniciativasTotal) {
+        return;
+      }
+      setState(() => _loadingMoreIniciativas = true);
+    }
+
+    try {
+      final page = await _repository.fetchIniciativasPage(
+        widget.depCadId,
+        offset: fromStart ? 0 : _iniciativas.length,
+      );
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _iniciativas.addAll(page.iniciativas);
+        _iniciativasTotal = page.total;
+        _loadingIniciativas = false;
+        _loadingMoreIniciativas = false;
+        _iniciativasError = null;
+      });
+    } on DeputiesRepositoryException catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _iniciativasError = error.message;
+        _loadingIniciativas = false;
+        _loadingMoreIniciativas = false;
+      });
+    } on Exception {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _iniciativasError = 'Ocorreu um erro ao carregar as iniciativas.';
+        _loadingIniciativas = false;
+        _loadingMoreIniciativas = false;
+      });
+    }
   }
+
+  bool get _hasMoreIniciativas => _iniciativas.length < _iniciativasTotal;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<_DeputyDetailData>(
-      future: _detailFuture,
+    return FutureBuilder<Deputy>(
+      future: _deputyFuture,
       builder: (context, snapshot) {
-        final deputy = snapshot.data?.deputy;
+        final deputy = snapshot.data;
         final title = deputy?.nomeParlamentar ?? 'Deputado';
 
         return Scaffold(
@@ -75,7 +116,7 @@ class _DeputyDetailScreenState extends State<DeputyDetailScreen> {
     );
   }
 
-  Widget _buildBody(BuildContext context, AsyncSnapshot<_DeputyDetailData> snapshot) {
+  Widget _buildBody(BuildContext context, AsyncSnapshot<Deputy> snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -94,7 +135,7 @@ class _DeputyDetailScreenState extends State<DeputyDetailScreen> {
               Text(message, textAlign: TextAlign.center),
               const SizedBox(height: 16),
               FilledButton(
-                onPressed: _loadDetail,
+                onPressed: _loadDeputy,
                 child: const Text('Tentar novamente'),
               ),
             ],
@@ -103,7 +144,7 @@ class _DeputyDetailScreenState extends State<DeputyDetailScreen> {
       );
     }
 
-    final data = snapshot.data!;
+    final deputy = snapshot.data!;
     final theme = Theme.of(context);
 
     return CustomScrollView(
@@ -117,20 +158,20 @@ class _DeputyDetailScreenState extends State<DeputyDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   PartyBadge(
-                    partyName: data.deputy.partidoAtual,
-                    color: PartyColors.forParty(data.deputy.partidoAtual),
+                    partyName: deputy.partidoAtual,
+                    color: PartyColors.forParty(deputy.partidoAtual),
                   ),
-                  if (data.deputy.circuloAtual != null) ...[
+                  if (deputy.circuloAtual != null) ...[
                     const SizedBox(height: 12),
                     Text(
-                      'Círculo: ${data.deputy.circuloAtual}',
+                      'Círculo: ${deputy.circuloAtual}',
                       style: theme.textTheme.bodyMedium,
                     ),
                   ],
-                  if (data.deputy.nomeCompleto != null) ...[
+                  if (deputy.nomeCompleto != null) ...[
                     const SizedBox(height: 8),
                     Text(
-                      data.deputy.nomeCompleto!,
+                      deputy.nomeCompleto!,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -145,30 +186,69 @@ class _DeputyDetailScreenState extends State<DeputyDetailScreen> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: Text(
-              'Iniciativas',
+              _iniciativasTotal > 0
+                  ? 'Iniciativas (${_iniciativas.length} de $_iniciativasTotal)'
+                  : 'Iniciativas',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
         ),
-        if (data.iniciativas.isEmpty)
+        if (_loadingIniciativas)
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 24),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          )
+        else if (_iniciativasError != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              child: Column(
+                children: [
+                  Text(_iniciativasError!, textAlign: TextAlign.center),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: () => _loadIniciativas(fromStart: true),
+                    child: const Text('Tentar novamente'),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else if (_iniciativas.isEmpty)
           const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
               child: Center(child: Text('Sem iniciativas registadas')),
             ),
           )
-        else
+        else ...[
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                return IniciativaCard(iniciativa: data.iniciativas[index]);
+                return IniciativaCard(iniciativa: _iniciativas[index]);
               },
-              childCount: data.iniciativas.length,
+              childCount: _iniciativas.length,
             ),
           ),
-        const SliverToBoxAdapter(child: SizedBox(height: 8)),
+          if (_hasMoreIniciativas)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                child: _loadingMoreIniciativas
+                    ? const Center(child: CircularProgressIndicator())
+                    : FilledButton.tonal(
+                        onPressed: () => _loadIniciativas(fromStart: false),
+                        child: const Text('Carregar mais'),
+                      ),
+              ),
+            )
+          else
+            const SliverToBoxAdapter(child: SizedBox(height: 8)),
+        ],
       ],
     );
   }

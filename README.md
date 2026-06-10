@@ -26,6 +26,15 @@ firebase deploy --only hosting,functions
 
 Project: `parlamento-formacao` (Blaze plan). The Cloud Function `votoabertoProxy` proxies `/api/**` to [votoaberto](https://api.votoaberto.org/api/v1) so the Web app can load data without CORS errors.
 
+## Tests
+
+```bash
+flutter test
+flutter test --coverage   # writes coverage/lcov.info (lib/ ~94% line coverage)
+```
+
+38 tests passing. See [docs/CONTEXTO.md](docs/CONTEXTO.md) for full project status.
+
 ## Stack
 
 - Flutter (Web + mobile/desktop)

@@ -1,0 +1,42 @@
+00:00 +0: loading C:/Users/Joaoc/parlamento-formacao/test/core/theme/app_theme_test.dart
+00:00 +0: C:/Users/Joaoc/parlamento-formacao/test/core/theme/app_theme_test.dart: AppTheme Tests light theme has correct configuration
+00:00 +1: C:/Users/Joaoc/parlamento-formacao/test/core/theme/app_theme_test.dart: AppTheme Tests dark theme has correct configuration
+00:00 +2: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/data/deputies_repository_test.dart: DeputiesRepository fetchAllDeputies merges all paginated pages
+00:00 +3: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/data/deputies_repository_test.dart: DeputiesRepository fetchAllDeputies uses ApiConstants query parameters
+00:00 +4: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/data/deputies_repository_test.dart: DeputiesRepository fetchAllDeputies throws on non-200 response
+00:00 +5: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/data/deputies_repository_test.dart: DeputiesRepository fetchDeputy parses detail response
+00:00 +6: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/data/deputies_repository_test.dart: DeputiesRepository fetchIniciativas parses first page
+00:00 +7: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/data/deputies_repository_test.dart: DeputiesRepository fetchIniciativasPage requests offset in URL
+00:00 +8: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/data/deputies_repository_test.dart: DeputiesRepository fetchAllDeputies throws on invalid JSON
+00:00 +9: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/domain/deputy_test.dart: Deputy fromJson parses required and optional fields
+00:00 +10: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/domain/deputy_test.dart: Deputy fromJson parses photo URL when present
+00:00 +11: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/domain/deputy_test.dart: DeputiesPage fromJson extracts deputies and pagination
+00:00 +12: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/domain/iniciativa_test.dart: Iniciativa fromJson parses fields from API sample
+00:00 +13: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/domain/iniciativa_test.dart: IniciativasPage fromJson extracts iniciativas and pagination
+00:00 +14: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/providers/deputies_filter_provider_test.dart: filterDeputies filters by accent-insensitive search query
+00:00 +15: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/providers/deputies_filter_provider_test.dart: filterDeputies filters by selected party
+00:00 +16: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/providers/deputies_filter_provider_test.dart: filterDeputies combines search and party filters
+00:00 +17: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/providers/deputies_filter_provider_test.dart: filteredDeputiesProvider derives sorted unique parties from cached deputies
+00:00 +18: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/providers/deputies_provider_test.dart: deputiesProvider fetches deputies once and caches result
+00:00 +19: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/providers/deputies_provider_test.dart: deputiesProvider refresh refetches deputies
+00:01 +20: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/screens/deputies_list_screen_test.dart: DeputiesListScreen Widget Tests shows loading indicator while fetching deputies
+00:01 +21: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/screens/deputies_list_screen_test.dart: DeputiesListScreen Widget Tests shows loading indicator while fetching deputies
+00:01 +22: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/screens/deputies_list_screen_test.dart: DeputiesListScreen Widget Tests shows loading indicator while fetching deputies
+00:01 +23: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/widgets/deputies_filter_bar_test.dart: DeputiesFilterBar shows Limpar when search is active and clears filters
+00:02 +24: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/widgets/deputies_filter_bar_test.dart: DeputiesFilterBar shows Limpar when search is active and clears filters
+00:02 +25: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/widgets/deputies_filter_bar_test.dart: DeputiesFilterBar shows Limpar when search is active and clears filters
+00:02 +26: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/widgets/deputies_filter_bar_test.dart: DeputiesFilterBar shows Limpar when search is active and clears filters
+00:02 +27: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/widgets/deputies_filter_bar_test.dart: DeputiesFilterBar shows Limpar when search is active and clears filters
+00:02 +28: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/widgets/deputies_filter_bar_test.dart: DeputiesFilterBar shows Limpar when search is active and clears filters
+00:02 +29: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/widgets/deputies_filter_bar_test.dart: DeputiesFilterBar shows Limpar when search is active and clears filters
+00:02 +30: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/widgets/deputies_filter_bar_test.dart: DeputiesFilterBar shows Limpar when search is active and clears filters
+00:02 +31: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/widgets/deputies_filter_bar_test.dart: DeputiesFilterBar shows Limpar when search is active and clears filters
+00:02 +32: C:/Users/Joaoc/parlamento-formacao/test/widget_test.dart: App launches with deputies screen
+00:02 +33: C:/Users/Joaoc/parlamento-formacao/test/widget_test.dart: App launches with deputies screen
+00:02 +34: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/screens/deputies_list_screen_test.dart: DeputiesListScreen Widget Tests shows empty state when filters match nothing
+00:02 +35: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/screens/deputies_list_screen_test.dart: DeputiesListScreen Widget Tests shows empty state when repository returns no deputies
+00:02 +36: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/screens/deputies_list_screen_test.dart: DeputiesListScreen Widget Tests navigates to detail when deputy card is tapped
+00:02 +37: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/screens/deputies_list_screen_test.dart: DeputiesListScreen Widget Tests does not refetch deputies when returning from detail
+00:03 +38: C:/Users/Joaoc/parlamento-formacao/test/features/deputies/presentation/screens/deputies_list_screen_test.dart: DeputiesListScreen Widget Tests toggles theme mode with switch
+00:03 +39: All tests passed!
+DONE 

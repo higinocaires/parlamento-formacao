@@ -8,6 +8,7 @@ import 'package:parlamento_pt/core/router/app_router.dart';
 import 'package:parlamento_pt/features/deputies/data/deputies_repository.dart';
 import 'package:parlamento_pt/features/deputies/domain/deputy.dart';
 import 'package:parlamento_pt/features/deputies/domain/iniciativa.dart';
+import 'package:parlamento_pt/features/deputies/domain/iniciativas_page.dart';
 import 'package:parlamento_pt/features/deputies/presentation/providers/deputies_provider.dart';
 import 'package:parlamento_pt/features/deputies/presentation/screens/deputies_list_screen.dart';
 import 'package:parlamento_pt/features/deputies/presentation/screens/deputy_detail_screen.dart';
@@ -210,7 +211,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(DeputyDetailScreen), findsOneWidget);
-      expect(find.text('Iniciativas'), findsOneWidget);
+      expect(find.text('Iniciativas (1 de 1)'), findsOneWidget);
       expect(find.text('Iniciativa de teste'), findsOneWidget);
       expect(find.text('Círculo: Braga'), findsOneWidget);
     });
@@ -334,10 +335,27 @@ class _FakeDeputiesRepository extends DeputiesRepository {
   }
 
   @override
-  Future<List<Iniciativa>> fetchIniciativas(int depCadId) async {
+  Future<IniciativasPage> fetchIniciativasPage(
+    int depCadId, {
+    int offset = 0,
+    int? limit,
+  }) async {
     if (error != null) {
       throw error!;
     }
-    return iniciativas;
+    if (offset >= iniciativas.length) {
+      return IniciativasPage(
+        iniciativas: const [],
+        limit: limit ?? 50,
+        offset: offset,
+        total: iniciativas.length,
+      );
+    }
+    return IniciativasPage(
+      iniciativas: iniciativas.sublist(offset),
+      limit: limit ?? 50,
+      offset: offset,
+      total: iniciativas.length,
+    );
   }
 }
