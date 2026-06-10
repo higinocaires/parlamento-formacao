@@ -11,7 +11,7 @@
 | Repository | https://github.com/higinocaires/parlamento-formacao |
 | Package name | `parlamento_pt` |
 | Org | `pt.parlamento` |
-| Primary platform | Web (`flutter run -d chrome`) |
+| Primary platform | Web (deployed: `parlamento-formacao.web.app`) |
 | API | [Parlamento.pt open data](https://www.parlamento.pt/Cidadania/paginas/dadosabertos.aspx) (JSON or XML) |
 | State management | **Riverpod only** (no BLoC, no Hooks) |
 | UI language | Portuguese (user-facing labels) |
@@ -112,7 +112,7 @@ lib/
 5. **Ephemeral vs persisted state**
    - Ephemeral: search query, form input, selected tab
    - Persisted in memory: deputies list loaded from API (survives navigation, not app restart)
-6. **Verify before finishing:** `flutter analyze` and `flutter run -d chrome`
+6. **Verify before finishing:** `flutter analyze`, `flutter test`, and Web on Firebase Hosting (or `flutter run -d windows` locally)
 
 ## Current status
 
@@ -185,13 +185,14 @@ lib/
           deputy_card.dart
           deputies_filter_bar.dart
           iniciativa_card.dart
-  firebase_options.dart                  # Firebase config (FlutterFire)
 firebase.json                            # Hosting + Functions config
 .firebaserc                              # Project: parlamento-formacao
 functions/
-  index.js                               # votoabertoProxy (CORS proxy for Web)
+  index.js                               # votoabertoProxy (public CORS proxy for Web)
 ```
 
-API: [votoaberto](https://api.votoaberto.org/api/v1). Web calls `/api/v1` via Hosting proxy; Android/iOS/Windows call upstream directly. Android `INTERNET` permission configured.
+**Live URL:** https://parlamento-formacao.web.app
 
-Deploy Web: `flutter build web` then `firebase deploy --only hosting,functions`
+API: [votoaberto](https://api.votoaberto.org/api/v1). Web calls `/api/v1` via Hosting proxy; Android/iOS/Windows call upstream directly. No `firebase_core` in the app — proxy + Hosting only. Android `INTERNET` permission configured.
+
+Deploy: `flutter build web` then `firebase deploy --only hosting,functions`
