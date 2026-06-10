@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:parlamento_pt/core/theme/theme_mode_provider.dart';
 import 'package:parlamento_pt/features/deputies/data/deputies_repository.dart';
 import 'package:parlamento_pt/features/deputies/domain/deputy.dart';
@@ -99,14 +100,7 @@ class _DeputiesListScreenState extends ConsumerState<DeputiesListScreen> {
                 party: deputy.partidoAtual,
                 partyColor: PartyColors.forParty(deputy.partidoAtual),
                 imageUrl: deputy.photoUrl,
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Selecionou ${deputy.nomeParlamentar}'),
-                      duration: const Duration(seconds: 1),
-                    ),
-                  );
-                },
+                onTap: () => context.push('/deputado/${deputy.depCadId}'),
               );
             },
           );

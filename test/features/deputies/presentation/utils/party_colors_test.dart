@@ -14,6 +14,7 @@ void main() {
       expect(PartyColors.forParty('L'), const Color(0xFF9ACD32));
       expect(PartyColors.forParty('LIVRE'), const Color(0xFF9ACD32));
       expect(PartyColors.forParty('PAN'), const Color(0xFF00897B));
+      expect(PartyColors.forParty('JPP'), const Color(0xFF1B5E20));
     });
 
     test('returns null for unknown party', () {

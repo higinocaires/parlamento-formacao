@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:parlamento_pt/core/app.dart';
+import 'package:parlamento_pt/core/router/app_router.dart';
 import 'package:parlamento_pt/features/deputies/data/deputies_repository.dart';
 import 'package:parlamento_pt/features/deputies/domain/deputy.dart';
+import 'package:parlamento_pt/features/deputies/domain/iniciativa.dart';
 import 'package:parlamento_pt/features/deputies/presentation/screens/deputies_list_screen.dart';
+import 'package:parlamento_pt/features/deputies/presentation/screens/deputy_detail_screen.dart';
 import 'package:parlamento_pt/features/deputies/presentation/widgets/deputy_card.dart';
 
 void main() {
@@ -111,6 +114,47 @@ void main() {
       expect(find.text('Nenhum deputado encontrado'), findsOneWidget);
     });
 
+    testWidgets('navigates to detail when deputy card is tapped', (
+      WidgetTester tester,
+    ) async {
+      const deputy = Deputy(
+        depCadId: 42,
+        nomeParlamentar: 'Luís Montenegro',
+        partidoAtual: 'PSD',
+        circuloAtual: 'Braga',
+        nomeCompleto: 'Luís Montenegro Completo',
+      );
+      const iniciativa = Iniciativa(
+        id: '1',
+        numero: '900',
+        titulo: 'Iniciativa de teste',
+        descricaoTipo: 'Projeto de Resolução',
+      );
+
+      final repository = _FakeDeputiesRepository(
+        deputies: const [deputy],
+        deputyDetail: deputy,
+        iniciativas: const [iniciativa],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp.router(
+            routerConfig: createAppRouter(repository: repository),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Luís Montenegro'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(DeputyDetailScreen), findsOneWidget);
+      expect(find.text('Iniciativas'), findsOneWidget);
+      expect(find.text('Iniciativa de teste'), findsOneWidget);
+      expect(find.text('Círculo: Braga'), findsOneWidget);
+    });
+
     testWidgets('toggles theme mode with switch', (WidgetTester tester) async {
       await tester.pumpWidget(
         const ProviderScope(
@@ -132,46 +176,21 @@ void main() {
 
       expect(tester.widget<Switch>(switchFinder).value, isFalse);
     });
-
-    testWidgets('shows SnackBar when deputy card is tapped', (
-      WidgetTester tester,
-    ) async {
-      const deputyName = 'Luís Montenegro';
-      final repository = _FakeDeputiesRepository(
-        deputies: const [
-          Deputy(
-            depCadId: 1,
-            nomeParlamentar: deputyName,
-            partidoAtual: 'PSD',
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            home: DeputiesListScreen(repository: repository),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text(deputyName));
-      await tester.pump();
-
-      expect(find.text('Selecionou $deputyName'), findsOneWidget);
-    });
   });
 }
 
 class _FakeDeputiesRepository extends DeputiesRepository {
   _FakeDeputiesRepository({
     this.deputies = const [],
+    this.deputyDetail,
+    this.iniciativas = const [],
     this.completer,
     this.error,
   });
 
   final List<Deputy> deputies;
+  final Deputy? deputyDetail;
+  final List<Iniciativa> iniciativas;
   final Completer<List<Deputy>>? completer;
   final Object? error;
 
@@ -184,5 +203,26 @@ class _FakeDeputiesRepository extends DeputiesRepository {
       return Future<List<Deputy>>.error(error!);
     }
     return Future<List<Deputy>>.value(deputies);
+  }
+
+  @override
+  Future<Deputy> fetchDeputy(int depCadId) async {
+    if (error != null) {
+      throw error!;
+    }
+    return deputyDetail ??
+        Deputy(
+          depCadId: depCadId,
+          nomeParlamentar: 'Deputado $depCadId',
+          partidoAtual: 'PS',
+        );
+  }
+
+  @override
+  Future<List<Iniciativa>> fetchIniciativas(int depCadId) async {
+    if (error != null) {
+      throw error!;
+    }
+    return iniciativas;
   }
 }

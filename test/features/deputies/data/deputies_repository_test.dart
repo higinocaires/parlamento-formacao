@@ -96,6 +96,56 @@ void main() {
       );
     });
 
+    test('fetchDeputy parses detail response', () async {
+      const detail = {
+        'legislatura': 'L17',
+        'dep_cad_id': 7489.0,
+        'nome_parlamentar': 'Adriana Rodrigues',
+        'nome_completo': 'Adriana Helena da Silva Rodrigues',
+        'circulo_atual': 'Aveiro',
+        'partido_atual': 'PSD',
+        'situacao_atual': 'Efetivo',
+      };
+
+      final client = MockClient(
+        (_) async => http.Response(jsonEncode(detail), 200),
+      );
+
+      final repository = DeputiesRepository(client: client);
+      final deputy = await repository.fetchDeputy(7489);
+
+      expect(deputy.depCadId, 7489);
+      expect(deputy.nomeParlamentar, 'Adriana Rodrigues');
+      expect(deputy.circuloAtual, 'Aveiro');
+    });
+
+    test('fetchIniciativas parses first page', () async {
+      final page = {
+        'data': [
+          {
+            'ini_id': '356662',
+            'ini_nr': '900',
+            'legislatura': 'L17',
+            'ini_tipo': 'R',
+            'ini_desc_tipo': 'Projeto de Resolução',
+            'ini_titulo': 'Primeira iniciativa',
+            'autor_gp': null,
+          },
+        ],
+        'pagination': {'limit': 50, 'offset': 0, 'total': 1},
+      };
+
+      final client = MockClient(
+        (_) async => http.Response(jsonEncode(page), 200),
+      );
+
+      final repository = DeputiesRepository(client: client);
+      final iniciativas = await repository.fetchIniciativas(7489);
+
+      expect(iniciativas, hasLength(1));
+      expect(iniciativas.first.titulo, 'Primeira iniciativa');
+    });
+
     test('fetchAllDeputies throws on invalid JSON', () async {
       final client = MockClient(
         (_) async => http.Response('not json', 200),

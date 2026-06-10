@@ -18,6 +18,7 @@ class PartyColors {
     'L': Color(0xFF9ACD32), // Livre — verde alface
     'LIVRE': Color(0xFF9ACD32),
     'PAN': Color(0xFF00897B), // Azul-esverdeado
+    'JPP': Color(0xFF1B5E20), // Verde escuro
   };
 
   /// Returns a color for [partyAcronym], or null if unknown.
