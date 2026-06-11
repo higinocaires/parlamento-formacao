@@ -107,6 +107,10 @@ unlinked_spec.ds
 # Coverage
 coverage/
 
+# MCP server
+mcp_server/.dart_tool/
+mcp_server/pubspec.lock
+
 # Firebase
 .firebase/
 functions/node_modules/

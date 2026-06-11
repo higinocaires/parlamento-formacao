@@ -140,9 +140,9 @@ lib/
 - **Web CORS proxy** — Cloud Function `votoabertoProxy` (`functions/index.js`); Hosting rewrite `/api/**` → proxy; Web uses `ApiConstants.webProxyBaseUrl` (`/api/v1`), native uses upstream URL directly
 - Dependencies: `flutter_riverpod`, `http`, `go_router`, `diacritic`
 - `PartyColors` utility for party badge colours
-- **Tests (Module 2 Nice)** — 38 tests passing; `lib/` line coverage **93.77%** (376/401 lines, measured with `flutter test --coverage`; course target ≥20%)
-
+- **Tests (Module 2 Nice)** — 39 tests passing; `lib/` line coverage **~94%** (`flutter test --coverage`; course target ≥20%)
 - **Iniciativas pagination** — `fetchIniciativasPage` in repository; detail screen loads 50 at a time with **Carregar mais** button
+- **MCP server (Module 3 Nice)** — `mcp_server/` with [`mcp_dart`](https://pub.dev/packages/mcp_dart); tools `list_deputies`, `get_deputy`; Cursor config in `.cursor/mcp.json`; terminal demos: `bin/demo_list.dart`, `test_inspect.cmd`
 
 ### Not started yet
 
@@ -190,6 +190,12 @@ firebase.json                            # Hosting + Functions config
 .firebaserc                              # Project: parlamento-formacao
 functions/
   index.js                               # votoabertoProxy (public CORS proxy for Web)
+.cursor/
+  mcp.json                               # Cursor MCP config (Windows cmd wrapper)
+mcp_server/
+  bin/parlamento_mcp.dart                # MCP server (stdio)
+  bin/demo_list.dart                     # Terminal API demo (no MCP protocol)
+  test_inspect.cmd                       # Windows: test list_deputies via mcp_dart inspect
 ```
 
 **Live URL:** https://parlamento-formacao.web.app

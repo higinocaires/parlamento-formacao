@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "parlamento": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "cd /d C:\\Users\\Joaoc\\parlamento-formacao\\mcp_server && dart run bin\\parlamento_mcp.dart"
+      ]
+    }
+  }
+}

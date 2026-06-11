@@ -7,6 +7,8 @@ Flutter course project — Web app to explore **Portuguese Parliament** open dat
 ## Docs
 
 - **[Project context](docs/CONTEXTO.md)** — app overview, architecture, course requirements, current status
+- **[Module guide (PT)](docs/GUIA-MODULOS.md)** — Must/Should/Nice per module, demo Q&A
+- **[MCP server](mcp_server/README.md)** — simple `mcp_dart` server (Module 3 Nice)
 
 ## Quick start (local)
 
@@ -33,7 +35,19 @@ flutter test
 flutter test --coverage   # writes coverage/lcov.info (lib/ ~94% line coverage)
 ```
 
-38 tests passing. See [docs/CONTEXTO.md](docs/CONTEXTO.md) for full project status.
+39 tests passing. See [docs/CONTEXTO.md](docs/CONTEXTO.md) for full project status.
+
+## MCP server (Module 3 Nice)
+
+Separate Dart process for AI tools ([`mcp_dart`](https://pub.dev/packages/mcp_dart)). See [mcp_server/README.md](mcp_server/README.md).
+
+```powershell
+cd mcp_server
+dart run bin/demo_list.dart    # quick API demo
+.\test_inspect.cmd             # full MCP tool test (Windows)
+```
+
+Works in **Cursor** via `.cursor/mcp.json` (tools: `list_deputies`, `get_deputy`).
 
 ## Stack
 
