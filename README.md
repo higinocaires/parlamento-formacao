@@ -7,7 +7,6 @@ Flutter course project — Web app to explore **Portuguese Parliament** open dat
 ## Docs
 
 - **[Project context](docs/CONTEXTO.md)** — app overview, architecture, course requirements, current status
-- **[Module guide (PT)](docs/GUIA-MODULOS.md)** — Must/Should/Nice per module, demo Q&A
 - **[MCP server](mcp_server/README.md)** — simple `mcp_dart` server (Module 3 Nice)
 
 ## Quick start (local)
